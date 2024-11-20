@@ -21,7 +21,7 @@ export function SecondaryWindow() {
 	return (
 		<div className="h-screen w-screen bg-zinc-950 flex items-center justify-center">
 			<div
-				className={`text-9xl font-mono ${isOvertime ? "text-red-500" : "text-white"}`}
+				className={`text-[48vh] font-mono ${isOvertime ? "text-red-500" : "text-white"}`}
 			>
 				{isOvertime ? "+" : ""}
 				{formatTime(time)}

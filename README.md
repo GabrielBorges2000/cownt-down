@@ -110,7 +110,7 @@ git add .
 # Faça o commit das alterações e crie uma tag no mesmo comando
 # Crie uma tag com o formato esperado (começando com "v")
 # Substitua "v1.0.0" pelo número da versão desejada
-git commit -m "Nova versão: v1.0.0" && git tag v1.0.0
+git commit -m "Nova versão: v1.0.9" && git tag v1.0.9
 
 # Envie o commit e a tag para o repositório remoto
 git push origin main --tags

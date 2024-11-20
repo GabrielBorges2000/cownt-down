@@ -4,7 +4,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 export const api = {
   openSecondaryWindow: () => ipcRenderer.send('open-secondary-window'),
-  sendTimeUpdate: (time: number, isOvertime: boolean) => ipcRenderer.send('time-update', time, isOvertime),
+  closeSecondaryWindow: () => ipcRenderer.send('close-secondary-window'),
+  sendTimeUpdate: (time: number, isOvertime: boolean) =>
+    ipcRenderer.send('time-update', time, isOvertime),
   onTimeUpdate: (callback: (time: number, isOvertime: boolean) => void) => {
     ipcRenderer.on('time-update', (_, time, isOvertime) => callback(time, isOvertime))
   },

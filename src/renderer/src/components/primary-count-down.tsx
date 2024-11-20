@@ -9,6 +9,7 @@ import {
 	SelectValue,
 } from "@renderer/components/ui/select";
 import { Minus, Plus, Monitor, Play, Square } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 declare global {
 	interface Window {
@@ -21,12 +22,13 @@ declare global {
 
 export function Countdown() {
 	const [timeLeft, setTimeLeft] = useState(0);
-	const [inputTime, setInputTime] = useState("");
+	const [inputTime, setInputTime] = useState("0");
 	const [isRunning, setIsRunning] = useState(false);
 	const [error, setError] = useState("");
 	const [isOvertime, setIsOvertime] = useState(false);
 	const [continueAfterZero, setContinueAfterZero] = useState(false);
 	const [isExpireTime, setIsExpireTime] = useState(false);
+	const [isNoExternalDisplay, setIsNoExternalDisplay] = useState(false);
 
 	useEffect(() => {
 		let interval: NodeJS.Timeout;
@@ -37,16 +39,24 @@ export function Countdown() {
 					let newTime = time;
 					if (time > 0 && !isExpireTime) {
 						newTime = time - 1;
+
 						if (newTime <= 0) {
 							setIsExpireTime(true);
+							setIsOvertime(true);
 						}
 					} else if (continueAfterZero) {
 						newTime = Math.abs(time) + 1;
 						setIsOvertime(true);
 					} else {
 						setIsRunning(false);
+						window.api.sendTimeUpdate(0, false);
 					}
-					window.api.sendTimeUpdate(newTime, newTime < 0);
+					if (isExpireTime) {
+						window.api.sendTimeUpdate(newTime, true);
+					} else {
+						window.api.sendTimeUpdate(newTime, newTime <= 0);
+					}
+
 					return newTime;
 				});
 			}, 1000);
@@ -59,20 +69,22 @@ export function Countdown() {
 		if (isRunning) {
 			setIsRunning(false);
 		} else {
-			if (timeLeft <= 0 && !continueAfterZero) {
+			if (timeLeft <= 0) {
 				setError("O tempo deve ser maior que zero.");
 				return;
 			}
 			setError("");
 			setIsRunning(true);
 			setIsOvertime(false);
+			setIsExpireTime(false);
+			window.api.sendTimeUpdate(0, false);
 		}
 	};
 
 	const handleReset = () => {
 		setIsRunning(false);
 		setTimeLeft(0);
-		setInputTime("");
+		setInputTime("0");
 		setError("");
 		setIsOvertime(false);
 		setIsExpireTime(false);
@@ -95,8 +107,16 @@ export function Countdown() {
 		setInputTime(String(Math.max(0, Math.floor(timeLeft / 60) + amount)));
 	};
 
-	const openInSecondScreen = () => {
-		window.api.openSecondaryWindow();
+	const openOrCloseInSecondScreen = () => {
+		if (isNoExternalDisplay) {
+			window.api.closeSecondaryWindow();
+		} else {
+			window.api.openSecondaryWindow();
+		}
+
+		setIsNoExternalDisplay(!isNoExternalDisplay);
+
+		console.log("isNoExternalDisplay", isNoExternalDisplay);
 	};
 
 	const formatTime = (seconds: number) => {
@@ -107,35 +127,63 @@ export function Countdown() {
 	};
 
 	return (
-		<div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center p-4">
-			<div className="w-full max-w-md space-y-8">
+		<div className="min-h-screen bg-zinc-950 text-white flex flex-col justify-between p-8">
+			<header className="flex items-center justify-end">
+				<nav className="flex gap-4">
+					<nav className="flex gap-4">
+						<NavLink
+							to="/"
+							className={({ isActive }) =>
+								isActive ? "text-emerald-400 font-bold" : "hover:text-gray-500"
+							}
+						>
+							Inicio
+						</NavLink>
+						<NavLink
+							to="/about"
+							className={({ isActive }) =>
+								isActive ? "text-emerald-400 font-bold" : "hover:text-gray-500"
+							}
+						>
+							Sobre
+						</NavLink>
+					</nav>
+				</nav>
+			</header>
+			<div className="w-full max-w-md space-y-4 m-auto">
 				<div className="space-y-2 text-center">
 					<div className="inline-flex items-center gap-2">
 						<Button
 							variant="outline"
 							size="icon"
-							className="h-8 w-8 bg-zinc-950 hover:bg-zinc-900"
+							className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
 							onClick={() => adjustTime(-1)}
-							disabled={isRunning}
+							disabled={isExpireTime}
 						>
-							<Minus className="h-4 w-4" color="#fff" />
+							<Minus className="h-4 w-4 text-withe hover:text-black" />
 						</Button>
 						<Input
 							type="number"
 							value={inputTime}
 							onChange={(e) => handleTimeChange(e.target.value)}
-							className="w-20 bg-zinc-900 border-zinc-800 text-center"
+							className="w-20 bg-zinc-900 border-zinc-800 text-center placeholder:text-zinc-500"
 							placeholder="Min"
-							disabled={isRunning}
+							disabled={isRunning || isExpireTime}
+							style={{
+								appearance: "none",
+								MozAppearance: "textfield",
+								WebkitAppearance: "none",
+							}}
 						/>
+
 						<Button
 							variant="outline"
 							size="icon"
-							className="h-8 w-8 bg-zinc-950 hover:bg-zinc-900"
+							className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
 							onClick={() => adjustTime(1)}
-							disabled={isRunning}
+							disabled={isExpireTime}
 						>
-							<Plus className="h-4 w-4" color="#fff" />
+							<Plus className="h-4 w-4 text-withe hover:text-black" />
 						</Button>
 						<Select
 							onValueChange={(value) => setContinueAfterZero(value === "true")}
@@ -186,10 +234,91 @@ export function Countdown() {
 					<Button
 						variant="outline"
 						size="lg"
-						onClick={openInSecondScreen}
+						onClick={openOrCloseInSecondScreen}
 						className="bg-zinc-900 border-zinc-800"
 					>
 						<Monitor className="w-4 h-4" />
+					</Button>
+				</div>
+
+				<div className="flex gap-4">
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(+5)}
+						disabled={isExpireTime}
+					>
+						<Plus className="h-4 w-4 hover text-withe hover:text-black" /> 5 min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(+10)}
+						disabled={isExpireTime}
+					>
+						<Plus className="h-4 w-4 hover text-withe hover:text-black" /> 10
+						min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(+20)}
+						disabled={isExpireTime}
+					>
+						<Plus className="h-4 w-4 hover text-withe hover:text-black" /> 20
+						min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(+30)}
+						disabled={isExpireTime}
+					>
+						<Plus className="h-4 w-4 hover text-withe hover:text-black" /> 30
+						min
+					</Button>
+				</div>
+
+				<div className="flex gap-4">
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(-5)}
+						disabled={isExpireTime}
+					>
+						<Minus className="h-4 w-4 text-withe hover:text-black" /> 5 min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(-10)}
+						disabled={isExpireTime}
+					>
+						<Minus className="h-4 w-4 text-withe hover:text-black" /> 10 min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(-20)}
+						disabled={isExpireTime}
+					>
+						<Minus className="h-4 w-4 text-withe hover:text-black" /> 20 min
+					</Button>
+					<Button
+						variant="outline"
+						// size="icon"
+						className="h-8  bg-zinc-950 hover:bg-zinc-50 hover:text-black"
+						onClick={() => adjustTime(-30)}
+						disabled={isExpireTime}
+					>
+						<Minus className="h-4 w-4 text-withe hover:text-black" /> 30 min
 					</Button>
 				</div>
 			</div>
