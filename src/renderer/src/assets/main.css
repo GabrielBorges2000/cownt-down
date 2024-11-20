@@ -58,9 +58,8 @@
   }
 }
 
-
 /* Remove as setas de todos os inputs tipo number */
-input[type="number"] {
+input[type='number'] {
   appearance: none;
   -moz-appearance: textfield;
   -webkit-appearance: none;

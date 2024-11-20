@@ -45,6 +45,6 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       }
     }
-	},
-	plugins: [require("tailwindcss-animate"), require("tailwind-scrollbar")],
-};
+  },
+  plugins: [require('tailwindcss-animate'), require('tailwind-scrollbar')]
+}

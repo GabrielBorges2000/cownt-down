@@ -32,18 +32,20 @@ $ npm build:mac
 # Para Linux
 $ npm build:linux
 ```
+
 # Como rodar este workflow no GitHub Actions
 
-Este workflow é configurado para ser executado automaticamente quando você cria um *tag* que começa com "v". Ele realiza a liberação de um aplicativo Electron em diferentes sistemas operacionais.
+Este workflow é configurado para ser executado automaticamente quando você cria um _tag_ que começa com "v". Ele realiza a liberação de um aplicativo Electron em diferentes sistemas operacionais.
 
 ## Pré-requisitos
 
-1. Certifique-se de que você configurou um *secret* chamado `GITHUB_TOKEN` no seu repositório.
+1. Certifique-se de que você configurou um _secret_ chamado `GITHUB_TOKEN` no seu repositório.
 2. O aplicativo deve estar configurado para funcionar com o [Electron Builder](https://www.electron.build/).
 
 ## Estrutura do Workflow
 
 Este workflow suporta os seguintes sistemas operacionais:
+
 - Ubuntu (Linux)
 - macOS
 - Windows
@@ -55,7 +57,7 @@ Copie o código abaixo para um arquivo chamado `release.yml` no diretório `.git
 ```yaml
 on:
   push:
-    tags: ["*"]
+    tags: ['*']
 
 jobs:
   release:
@@ -73,7 +75,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
 
       - name: apt-update
         if: startsWith(matrix.os, 'ubuntu-latest')
@@ -97,6 +99,7 @@ jobs:
 ## Como funciona
 
 ### Disparo
+
 ```bash
 # Certifique-se de que está no branch correto
 git checkout main
@@ -110,25 +113,23 @@ git add .
 # Faça o commit das alterações e crie uma tag no mesmo comando
 # Crie uma tag com o formato esperado (começando com "v")
 # Substitua "v1.0.0" pelo número da versão desejada
-git commit -m "Nova versão: v1.0.9" && git tag v1.0.9
+git commit -m "Nova versão: v1.0.10" && git tag v1.0.10
 
 # Envie o commit e a tag para o repositório remoto
 git push origin main --tags
 
 ```
+
 ### O que o workflow faz?
 
-1. **Disparo**: O workflow é iniciado automaticamente quando um tag que corresponde ao padrão definido (*) é criado.
+1. **Disparo**: O workflow é iniciado automaticamente quando um tag que corresponde ao padrão definido (\*) é criado.
 
 2. **Execução em diferentes SOs**: Utiliza a matriz de estratégias para rodar em ubuntu-latest, macos-latest e windows-latest.
 
-3. **Etapas do workflow**: 
+3. **Etapas do workflow**:
 
-
- - Checkout do código fonte
- - Configuração do ambiente Node.js
- - Atualização de pacotes no Linux  
- - Instalação de dependências específicas
- - Build e publicação do app
-
-
+- Checkout do código fonte
+- Configuração do ambiente Node.js
+- Atualização de pacotes no Linux
+- Instalação de dependências específicas
+- Build e publicação do app

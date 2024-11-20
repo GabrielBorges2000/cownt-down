@@ -33,9 +33,9 @@ function createWindow(): void {
         -moz-appearance: textfield !important;
         appearance: none !important;
       }
-    `);
+    `)
     }
-  });
+  })
 
   mainWindow.on('close', () => {
     closeSecondaryWindow()
@@ -44,7 +44,7 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     if (mainWindow) {
       mainWindow.show()
-    }    
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -95,7 +95,7 @@ function createSecondaryWindow(): void {
       secondaryWindow = null
     })
   } else {
-   secondaryWindow = new BrowserWindow({
+    secondaryWindow = new BrowserWindow({
       x: 50,
       y: 50,
       width: 800,
@@ -132,16 +132,14 @@ function createSecondaryWindow(): void {
 
 function closeSecondaryWindow(): void {
   if (secondaryWindow) {
-    secondaryWindow.close();
-    secondaryWindow = null;
+    secondaryWindow.close()
+    secondaryWindow = null
   } else {
-    console.log('A janela secundária já está fechada ou não foi criada');
+    console.log('A janela secundária já está fechada ou não foi criada')
   }
 }
 
-
 app.whenReady().then(() => {
-
   electronApp.setAppUserModelId('com.electron')
 
   app.on('browser-window-created', (_, window) => {
@@ -157,10 +155,10 @@ app.whenReady().then(() => {
   })
 
   ipcMain.on('close-secondary-window', () => {
-  if (secondaryWindow) {
-    closeSecondaryWindow();
-  }
-});
+    if (secondaryWindow) {
+      closeSecondaryWindow()
+    }
+  })
 
   ipcMain.on('time-update', (_, time: number, isOvertime: boolean) => {
     if (secondaryWindow) {
