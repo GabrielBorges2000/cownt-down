@@ -1,5 +1,5 @@
-appId: com.codeborges.cownt-down
-productName: cownt-down
+appId: com.codeborges.cownt.down
+productName: Countdown
 directories:
   buildResources: build
 files:
@@ -33,11 +33,11 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+    - rpm
+    - pacman
+    - freebsd
+  maintainer: https://github.com/GabrielBorges2000
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-publish:
-  provider: generic
-  url: https://example.com/auto-updates
