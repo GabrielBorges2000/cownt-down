@@ -104,6 +104,9 @@ git checkout main
 # Atualize o branch com as últimas alterações
 git pull origin main
 
+# Adicione todas as alterações ao stage
+git add .
+
 # Faça o commit das alterações e crie uma tag no mesmo comando
 # Crie uma tag com o formato esperado (começando com "v")
 # Substitua "v1.0.0" pelo número da versão desejada
