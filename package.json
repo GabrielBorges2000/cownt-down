@@ -1,10 +1,10 @@
 {
   "name": "cownt-down",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Countdown timer for action and break",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "https://github.com/GabrielBorges2000",
+  "homepage": "https://github.com/GabrielBorges2000/cownt-down",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",

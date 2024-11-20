@@ -33,11 +33,11 @@ linux:
     - AppImage
     - snap
     - deb
-    - rpm
-    - pacman
-    - freebsd
   maintainer: https://github.com/GabrielBorges2000
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
+publish:
+  provider: generic
+  url: https://example.com/auto-updates
