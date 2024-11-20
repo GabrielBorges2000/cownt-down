@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: countdown
+  executableName: cowntdown
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -28,16 +28,14 @@ mac:
   notarize: false
 dmg:
   artifactName: ${name}-${version}.${ext}
-linux:
-  target:
-    - AppImage
-    - deb
-    - rpm
-    - pacman
-    - freebsd
-  maintainer: https://github.com/GabrielBorges2000
-  synopsis: ${description} 
-  category: Utility
-appImage:
-  artifactName: ${name}-${version}.${ext}
+# linux:
+#   target:
+#     - AppImage
+#     - snap
+#     - deb
+#   maintainer: https://github.com/GabrielBorges2000
+#   category: Utility
+# appImage:
+#   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
+
